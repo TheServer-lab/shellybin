@@ -1,0 +1,26 @@
+// demo.pa - a quick tour of mathlib/arrlib/diceutils/timeutils
+// together. Put this file and the modules it imports in the same
+// folder, then: party demo.pa
+
+module "mathlib.pa"
+module "arrlib.pa"
+module "diceutils.pa"
+module "timeutils.pa"
+
+vars start = stopwatch_start()
+
+display "clamp(15, 0, 10) ="
+display clamp(15, 0, 10)
+
+display "gcd(48, 18) ="
+display gcd(48, 18)
+
+vars rolls = roll_array(3, 6)
+display "3d6 rolls:"
+display rolls
+display "total ="
+display arr_sum(rolls)
+arr_free(rolls)
+
+display "elapsed seconds:"
+display stopwatch_elapsed(start)

@@ -1,0 +1,28 @@
+// timeutils.pa - small wrappers around Party's clock builtins
+// (time/datestr/timestr, PARTY_SPEC.md section 13).
+//   module "timeutils.pa"
+
+// stopwatch_start() - a mark to pass to stopwatch_elapsed() later.
+// Just time() under a clearer name at the call site.
+func stopwatch_start() {
+    return time()
+}
+
+// stopwatch_elapsed(mark) - seconds since `mark` (from
+// stopwatch_start()). time() is monotonic within a run but is not a
+// real Unix epoch - only meaningful as a difference between two
+// calls, not as an absolute timestamp (PARTY_SPEC.md section 13).
+func stopwatch_elapsed(mark) {
+    return time() - mark
+}
+
+// timestamp() - "YYYY-MM-DD HH:MM:SS" in one call, for quick log
+// lines. Built with string interpolation - consume the result
+// immediately (display it, fwrite it, etc.) before evaluating any
+// other interpolated string literal; see PARTY_SPEC.md section 1's
+// note on the shared interpolation buffer.
+func timestamp() {
+    vars d = datestr()
+    vars t = timestr()
+    return "{d} {t}"
+}

@@ -1,0 +1,26 @@
+// pathutils.pa - simple path-building helpers.
+//   module "pathutils.pa"
+// Party has no string-concatenation operator and no character
+// indexing (see PARTY_SPEC.md sections 1 and 4), so these lean
+// entirely on string interpolation - consume a builder function's
+// result immediately, before any other interpolated literal is
+// evaluated (see section 1's note on the shared interpolation
+// buffer).
+
+// join(dir, name) - "dir/name". Doesn't check whether `dir` already
+// ends in "/" - pass a bare folder name, the same shape `cf`/`cpy`
+// already expect (see the README's Path arguments note).
+func join(dir, name) {
+    return "{dir}/{name}"
+}
+
+// with_ext(name, ext) - "name.ext". `ext` should be given without
+// its own leading dot ("txt", not ".txt").
+func with_ext(name, ext) {
+    return "{name}.{ext}"
+}
+
+// is_blank(s) - true for an empty string.
+func is_blank(s) {
+    return s == ""
+}

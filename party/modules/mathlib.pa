@@ -1,0 +1,89 @@
+// mathlib.pa - small math helper functions for Party scripts.
+//   module "mathlib.pa"
+// Works with both int and float arguments except where noted (Party's
+// arithmetic operators are untyped - see PARTY_SPEC.md section 4).
+
+func abs(n) {
+    if (n < 0) {
+        return -n
+    }
+    return n
+}
+
+func min(a, b) {
+    if (a < b) {
+        return a
+    }
+    return b
+}
+
+func max(a, b) {
+    if (a > b) {
+        return a
+    }
+    return b
+}
+
+func clamp(n, lo, hi) {
+    if (n < lo) {
+        return lo
+    }
+    if (n > hi) {
+        return hi
+    }
+    return n
+}
+
+// sign(n) - -1, 0, or 1.
+func sign(n) {
+    if (n > 0) {
+        return 1
+    }
+    if (n < 0) {
+        return -1
+    }
+    return 0
+}
+
+// is_even(n) / is_odd(n) - n must be an int ('%' is int-only, see
+// PARTY_SPEC.md section 4).
+func is_even(n) {
+    return n % 2 == 0
+}
+
+func is_odd(n) {
+    return n % 2 != 0
+}
+
+// pow(base, exp) - base ** exp. exp must be a non-negative int;
+// base can be int or float. No exponent-by-squaring trick here -
+// exp multiplications, which is plenty for the small exponents a
+// script is likely to use.
+func pow(base, exp) {
+    vars result = 1
+    vars i = 0
+    while (i < exp) {
+        result = result * base
+        i = i + 1
+    }
+    return result
+}
+
+// gcd(a, b) / lcm(a, b) - both take non-negative ints.
+func gcd(a, b) {
+    vars t = 0
+    while (b != 0) {
+        t = b
+        b = a % b
+        a = t
+    }
+    return a
+}
+
+func lcm(a, b) {
+    vars g = gcd(a, b)
+    if (g == 0) {
+        return 0
+    }
+    return (a / g) * b
+}

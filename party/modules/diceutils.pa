@@ -1,0 +1,46 @@
+// diceutils.pa - dice-rolling and random-pick helpers on top of
+// Party's rand builtins (rand/randint/randseed, PARTY_SPEC.md
+// section 13).
+//   module "diceutils.pa"
+
+// roll(sides) - one die, 1..sides inclusive.
+func roll(sides) {
+    return randint(1, sides)
+}
+
+// roll_n(count, sides) - sum of `count` dice, each 1..sides, e.g.
+// roll_n(2, 6) for 2d6.
+func roll_n(count, sides) {
+    vars total = 0
+    vars i = 0
+    while (i < count) {
+        total = total + roll(sides)
+        i = i + 1
+    }
+    return total
+}
+
+// roll_array(count, sides) - like roll_n, but keeps every
+// individual roll instead of collapsing to a sum. Caller owns the
+// returned array and should arr_free it when done.
+func roll_array(count, sides) {
+    vars rolls = arr_new(count)
+    vars i = 0
+    while (i < count) {
+        arr_set(rolls, i, roll(sides))
+        i = i + 1
+    }
+    return rolls
+}
+
+// coinflip() - true/false with even odds.
+func coinflip() {
+    return randint(0, 1) == 1
+}
+
+// pick_index(count) - a random valid index into a `count`-length
+// array: randint(0, count - 1). Use with arr_get to pick a random
+// element, e.g. arr_get(a, pick_index(arr_len(a))).
+func pick_index(count) {
+    return randint(0, count - 1)
+}

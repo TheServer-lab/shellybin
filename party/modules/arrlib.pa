@@ -1,0 +1,123 @@
+// arrlib.pa - helpers on top of Party's fixed-size arrays.
+//   module "arrlib.pa"
+// See PARTY_SPEC.md section 10 for the arr_* builtins these build on.
+// Every function here takes an existing array (from arr_new) and
+// leaves ownership with the caller - none of them arr_free anything.
+
+func arr_sum(a) {
+    vars total = 0
+    vars i = 0
+    vars n = arr_len(a)
+    while (i < n) {
+        total = total + arr_get(a, i)
+        i = i + 1
+    }
+    return total
+}
+
+// arr_avg(a) - integer division if the array holds ints (Party has
+// no int-to-float cast - see PARTY_SPEC.md section 2); use a float
+// array for a fractional average.
+func arr_avg(a) {
+    vars n = arr_len(a)
+    if (n == 0) {
+        return 0
+    }
+    return arr_sum(a) / n
+}
+
+func arr_max(a) {
+    vars n = arr_len(a)
+    vars best = arr_get(a, 0)
+    vars v = 0
+    vars i = 1
+    while (i < n) {
+        v = arr_get(a, i)
+        if (v > best) {
+            best = v
+        }
+        i = i + 1
+    }
+    return best
+}
+
+func arr_min(a) {
+    vars n = arr_len(a)
+    vars best = arr_get(a, 0)
+    vars v = 0
+    vars i = 1
+    while (i < n) {
+        v = arr_get(a, i)
+        if (v < best) {
+            best = v
+        }
+        i = i + 1
+    }
+    return best
+}
+
+// arr_fill(a, value) - overwrite every element with value.
+func arr_fill(a, value) {
+    vars n = arr_len(a)
+    vars i = 0
+    while (i < n) {
+        arr_set(a, i, value)
+        i = i + 1
+    }
+}
+
+// arr_copy(a) - a new array with the same elements (shallow, like
+// any arr_set - a nested array element is copied by handle, not
+// deep-cloned; see PARTY_SPEC.md section 10). Caller owns the
+// returned array and should arr_free it when done.
+func arr_copy(a) {
+    vars n = arr_len(a)
+    vars b = arr_new(n)
+    vars i = 0
+    while (i < n) {
+        arr_set(b, i, arr_get(a, i))
+        i = i + 1
+    }
+    return b
+}
+
+// arr_index_of(a, target) - the first index where arr_get(a, i) ==
+// target, or -1 if it's never found. A type mismatch (e.g. target
+// is a string, an element is an int) just compares unequal, same as
+// == anywhere else - see PARTY_SPEC.md section 4.
+func arr_index_of(a, target) {
+    vars n = arr_len(a)
+    vars i = 0
+    vars v = 0
+    while (i < n) {
+        v = arr_get(a, i)
+        if (v == target) {
+            return i
+        }
+        i = i + 1
+    }
+    return -1
+}
+
+func arr_contains(a, target) {
+    return arr_index_of(a, target) != -1
+}
+
+// arr_swap(a, i, j) - exchange two elements in place.
+func arr_swap(a, i, j) {
+    vars tmp = arr_get(a, i)
+    arr_set(a, i, arr_get(a, j))
+    arr_set(a, j, tmp)
+}
+
+// arr_reverse(a) - reverse an array in place.
+func arr_reverse(a) {
+    vars n = arr_len(a)
+    vars i = 0
+    vars j = n - 1
+    while (i < j) {
+        arr_swap(a, i, j)
+        i = i + 1
+        j = j - 1
+    }
+}

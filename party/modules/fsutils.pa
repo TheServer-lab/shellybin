@@ -1,0 +1,62 @@
+// fsutils.pa - small conveniences on top of Party's file builtins
+// (fopen/fread/fwrite/fclose/fexists/fdelete, PARTY_SPEC.md section
+// 9) and rush.
+//   module "fsutils.pa"
+// Every function that builds a string via "{...}" interpolation
+// consumes it immediately (no other interpolated literal is
+// evaluated first) - see PARTY_SPEC.md section 1's note on the
+// shared interpolation buffer before changing these.
+
+// file_read_or(path, default) - the file's whole content if it
+// exists, else `default` untouched. Handy for a config file with a
+// sane fallback instead of an fopen("r") error on first run.
+func file_read_or(path, default) {
+    if (fexists(path)) {
+        vars h = fopen(path, "r")
+        vars text = fread(h)
+        fclose(h)
+        return text
+    }
+    return default
+}
+
+// file_write(path, text) - overwrite path's whole content with
+// text, creating the file if it doesn't exist yet ("w" truncates).
+func file_write(path, text) {
+    vars h = fopen(path, "w")
+    fwrite(h, text)
+    fclose(h)
+}
+
+// file_touch(path) - create path as an empty file if it doesn't
+// already exist; leaves an existing file's content untouched.
+func file_touch(path) {
+    if (fexists(path) == false) {
+        vars h = fopen(path, "w")
+        fclose(h)
+    }
+}
+
+// file_backup(path) - shells out to `cpy` to save a "path.bak"
+// copy alongside the original. Uses rush, so this only resolves
+// paths the way any other rush-driven `cpy` does (current-folder
+// names, not arbitrary path arguments - see the README's "Natural
+// next steps" note on path arguments).
+func file_backup(path) {
+    rush "cpy {path} {path}.bak"
+}
+
+// file_restore(path) - the reverse of file_backup: overwrites path
+// with "path.bak"'s content, if that backup exists. Returns true if
+// a restore happened, false if there was no backup to restore from.
+func file_restore(path) {
+    vars bak = "{path}.bak"
+    if (fexists(bak)) {
+        vars h = fopen(bak, "r")
+        vars text = fread(h)
+        fclose(h)
+        file_write(path, text)
+        return true
+    }
+    return false
+}
