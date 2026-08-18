@@ -1,0 +1,27 @@
+vars secret = "42"
+vars guess = ""
+vars attempts = 0
+
+display "=============================="
+display "   ShellyForever Guess Game"
+display "=============================="
+display "I'm thinking of a number from 1 to 100."
+display "Try to guess it!"
+
+while (guess != secret) {
+    display ""
+    display "Enter your guess:"
+    read guess
+
+    attempts = attempts + 1
+
+    if (guess == secret) {
+        display "Correct!"
+    } else {
+        display "Wrong! Try again."
+    }
+}
+
+display ""
+display "You got it in {attempts} attempts!"
+display "Thanks for playing!"
