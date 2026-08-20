@@ -1,0 +1,3 @@
+boot.bin=512,5486A8DF
+stage2.bin=65680,C2B0063E
+kernel_body.bin=1027066,CB6E6BEF
